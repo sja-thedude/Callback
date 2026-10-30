@@ -1,0 +1,20 @@
+{
+  "name": "callback",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A live callback engine for Twitch streamers.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "sample": "node scripts/build-sample.mjs",
+    "demo:fetch": "node scripts/fetch-demo-clips.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20250214.0",
+    "typescript": "^5.7.3",
+    "wrangler": "^4.65.0"
+  }
+}
