@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Callback · Your stream remembers</title>
+    <meta name="description" content="Callback watches live Twitch chat and brings back the old clip that matches what is happening right now, as an OBS overlay and a chat message." />
+    <meta name="theme-color" content="#f4efe7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#100e0c" media="(prefers-color-scheme: dark)" />
+    <meta property="og:title" content="Callback · Your stream remembers" />
+    <meta property="og:description" content="A live callback engine for Twitch. When chat rhymes with an old moment, the old clip plays on stream." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://callback.sja-affu765.workers.dev/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script>
+      try {
+        const t = localStorage.getItem("cb-theme");
+        if (t) document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..700,0..100&family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/site.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="nav">
+      <div class="wrap nav-inner">
+        <a class="brand" href="/" aria-label="Callback home">
+          <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="var(--accent)" /><path d="M33 20 19 32l14 12V20Zm14 0L33 32l14 12V20Z" fill="var(--bg)" /><circle cx="50" cy="14" r="5" fill="var(--bg)" /></svg>
+          Callback
+        </a>
+        <nav class="nav-links" aria-label="Sections">
+          <a href="#how">How it works</a>
+          <a href="#restraint">Restraint</a>
+          <a href="#obs">OBS setup</a>
+        </nav>
+        <div class="nav-actions">
+          <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle colour theme">
+            <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+            <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" /></svg>
+          </button>
+          <a class="btn btn-ink btn-sm nav-cta" href="/panel">Control panel</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero wrap">
+        <div class="hero-copy">
+          <p class="eyebrow rise" style="--i: 0"><span class="rec" aria-hidden="true"></span> Live callback engine for Twitch</p>
+          <h1 class="rise" style="--i: 1">Your stream <em>remembers.</em></h1>
+          <p class="lede rise" style="--i: 2">
+            When chat starts saying something that has happened before, Callback finds the old clip and puts it on stream at that moment, with the date and a one-line reason.
+          </p>
+          <div class="hero-ctas rise" style="--i: 3">
+            <a class="btn btn-primary btn-lg" href="/panel?demo=1">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
+              Watch it fire, no login
+            </a>
+            <a class="btn btn-lg" href="/panel">Connect your channel</a>
+          </div>
+          <dl class="hero-stats rise" style="--i: 4">
+            <div><dt>Retrieval</dt><dd>Semantic + keyword hybrid</dd></div>
+            <div><dt>Restraint</dt><dd>One callback per few minutes</dd></div>
+            <div><dt>Setup</dt><dd>One OBS browser source</dd></div>
+          </dl>
+        </div>
+
+        <figure class="monitor rise" style="--i: 2">
+          <div class="monitor-screen">
+            <img src="/img/scene.svg" alt="Illustrated gameplay: a streamer's character faces a lantern-carrying boss in a cave, with a webcam in the corner." width="1920" height="1080" />
+            <iframe src="/overlay?showcase=1" title="Callback overlay playing sample callbacks" tabindex="-1" loading="eager"></iframe>
+            <span class="live-badge"><i></i>LIVE</span>
+          </div>
+          <aside class="monitor-chat" aria-label="Sample chat">
+            <div class="chat-head">Stream chat</div>
+            <ol class="chat-scroll" id="hero-chat"></ol>
+          </aside>
+          <figcaption>The real overlay, running on a sample channel. Nothing here is a video.</figcaption>
+        </figure>
+      </section>
+
+      <section class="rhymes wrap" aria-labelledby="rhymes-title">
+        <div class="section-head reveal">
+          <p class="eyebrow">The moment it makes</p>
+          <h2 id="rhymes-title">Chat says it. The archive answers.</h2>
+          <p class="lede">Highlight tools look back after the stream ends. Callback looks back while you're still live, so the old moment lands while chat still cares.</p>
+        </div>
+        <div class="rhyme-grid" id="rhyme-grid"></div>
+      </section>
+
+      <section class="how wrap" id="how" aria-labelledby="how-title">
+        <div class="section-head reveal">
+          <p class="eyebrow">How it works</p>
+          <h2 id="how-title">Four steps, all running live.</h2>
+        </div>
+        <ol class="steps">
+          <li class="step card reveal" style="--i: 0">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="14" width="48" height="36" rx="6" /><path d="M20 26h24M20 34h14" /><circle cx="48" cy="46" r="10" class="fill" /><path d="M44 46l3 3 5-6" class="tick" /></svg>
+            <span class="step-n mono">01</span>
+            <h3>Index your clips</h3>
+            <p>Connect Twitch and Callback pulls your clip library through Helix, years of it, then embeds each title, game and date into a private vector index.</p>
+          </li>
+          <li class="step card reveal" style="--i: 1">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 44 20 30l8 8 10-18 8 12 8-6" /><path d="M10 52h44" /><circle cx="38" cy="20" r="4" class="fill" /></svg>
+            <span class="step-n mono">02</span>
+            <h3>Listen to the room</h3>
+            <p>A rolling window of live chat is watched for velocity spikes, phrases repeated by many different chatters, raids and category changes.</p>
+          </li>
+          <li class="step card reveal" style="--i: 2">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="28" cy="28" r="14" /><path d="M38 38l14 14" /><path d="M22 28h12M28 22v12" /></svg>
+            <span class="step-n mono">03</span>
+            <h3>Find the rhyme</h3>
+            <p>The window is embedded and scored against every clip with hybrid retrieval: meaning, shared keywords, game, and how far the best clip leads the next one.</p>
+          </li>
+          <li class="step card reveal" style="--i: 3">
+            <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="12" width="48" height="32" rx="5" /><path d="M30 22 22 28l8 6V22Zm10 0-8 6 8 6V22Z" class="fill" /><path d="M24 52h16M32 44v8" /></svg>
+            <span class="step-n mono">04</span>
+            <h3>Play it back</h3>
+            <p>Above the confidence line and outside cooldown, the overlay rewinds to the old clip and the bot posts the link so chat can watch it again.</p>
+          </li>
+        </ol>
+      </section>
+
+      <section class="restraint wrap" id="restraint" aria-labelledby="restraint-title">
+        <div class="restraint-copy reveal">
+          <p class="eyebrow">Restraint is the feature</p>
+          <h2 id="restraint-title">It stays quiet until it's sure.</h2>
+          <p class="lede">A wrong callback on stream is worse than none. Every candidate is scored on four signals, and it has to clear your threshold, a cooldown, a no-repeat rule and a short veto window before anything reaches the stream.</p>
+          <ul class="checks">
+            <li>Cooldown between callbacks, tunable from 30 seconds to 30 minutes</li>
+            <li>Three-second veto window in the control panel before each fire</li>
+            <li>Only clips the streamer indexed from their own channel</li>
+          </ul>
+        </div>
+        <div class="verdicts">
+          <article class="verdict card reveal" style="--i: 0" data-bars>
+            <header>
+              <span class="pill is-accent"><span class="dot"></span>Fired</span>
+              <span class="mono score" data-count="94">0%</span>
+            </header>
+            <p class="v-chat mono">chat: "biscuit on the keyboard", "the cat paused the game"</p>
+            <h3>Biscuit the cat walks across the keyboard and pauses the final boss</h3>
+            <dl class="bars">
+              <div><dt>Meaning</dt><dd><i style="--v: 0.88"></i></dd></div>
+              <div><dt>Keywords</dt><dd><i style="--v: 0.82"></i></dd></div>
+              <div><dt>Lead</dt><dd><i style="--v: 1"></i></dd></div>
+              <div><dt>Same game</dt><dd><i style="--v: 1"></i></dd></div>
+            </dl>
+          </article>
+          <article class="verdict card reveal is-held" style="--i: 1" data-bars>
+            <header>
+              <span class="pill"><span class="dot"></span>Held back</span>
+              <span class="mono score" data-count="13">0%</span>
+            </header>
+            <p class="v-chat mono">chat: "who did the soundtrack", "the soundtrack slaps"</p>
+            <h3>Spending 900 gold on a hat. Worth it.</h3>
+            <dl class="bars">
+              <div><dt>Meaning</dt><dd><i style="--v: 0.06"></i></dd></div>
+              <div><dt>Keywords</dt><dd><i style="--v: 0"></i></dd></div>
+              <div><dt>Lead</dt><dd><i style="--v: 0.37"></i></dd></div>
+              <div><dt>Same game</dt><dd><i style="--v: 1"></i></dd></div>
+            </dl>
+          </article>
+        </div>
+      </section>
+
+      <section class="obs wrap" id="obs" aria-labelledby="obs-title">
+        <div class="section-head reveal">
+          <p class="eyebrow">OBS setup</p>
+          <h2 id="obs-title">One browser source. Thirty seconds.</h2>
+        </div>
+        <div class="obs-grid">
+          <ol class="obs-steps reveal">
+            <li><b>Copy your overlay link</b> from the control panel once your clips are indexed.</li>
+            <li><b>Add a Browser source</b> in OBS, paste the link, set 1920 × 1080.</li>
+            <li><b>Keep the control panel open</b> while you stream. Press "Send test" to check it lines up.</li>
+          </ol>
+          <div class="obs-card card reveal" style="--i: 1">
+            <div class="obs-row"><span class="mono muted">URL</span><code>https://…/overlay?c=…&amp;k=…</code></div>
+            <div class="obs-row"><span class="mono muted">Width</span><code>1920</code></div>
+            <div class="obs-row"><span class="mono muted">Height</span><code>1080</code></div>
+            <div class="obs-row"><span class="mono muted">Background</span><code>transparent, nothing to set</code></div>
+            <p class="muted small">Just want to try it? Add <code>/overlay?demo=1</code> as the source and it runs the sample channel by itself.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="final wrap reveal">
+        <svg class="final-art" viewBox="0 0 240 120" aria-hidden="true">
+          <rect x="10" y="20" width="220" height="80" rx="14" class="tape" />
+          <circle cx="70" cy="60" r="24" class="reel" /><circle cx="170" cy="60" r="24" class="reel" />
+          <circle cx="70" cy="60" r="7" class="hub" /><circle cx="170" cy="60" r="7" class="hub" />
+          <rect x="96" y="44" width="48" height="32" rx="4" class="window" />
+        </svg>
+        <h2>See it fire in the next minute.</h2>
+        <p class="lede">The demo replays a recorded chat at real speed against an indexed sample library. Open it, press nothing, and watch.</p>
+        <a class="btn btn-primary btn-lg" href="/panel?demo=1">Open the live demo</a>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap footer-inner">
+        <p>Callback is open source under the MIT licence. The demo channel, its clips, chatters and games are fictional and made for this project.</p>
+        <p class="mono muted">Made for the Codex × TwitchCon hackathon, 2026</p>
+      </div>
+    </footer>
+
+    <script type="module" src="/js/site.js"></script>
+  </body>
+</html>
