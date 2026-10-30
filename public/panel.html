@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Control panel · Callback</title>
+    <meta name="description" content="Tune Callback, watch candidate matches with their reasoning, and fire or veto callbacks live." />
+    <meta name="theme-color" content="#f4efe7" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#100e0c" media="(prefers-color-scheme: dark)" />
+    <meta property="og:title" content="Callback control panel" />
+    <meta property="og:description" content="Watch a live callback engine fire on a replayed Twitch chat. No login needed." />
+    <meta property="og:image" content="https://callback.sja-affu765.workers.dev/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script>
+      try {
+        const t = localStorage.getItem("cb-theme");
+        if (t) document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,400..700,0..100&family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/base.css" />
+    <link rel="stylesheet" href="/css/panel.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#feed">Skip to candidate feed</a>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Callback home">
+        <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="16" fill="var(--accent)" /><path d="M33 20 19 32l14 12V20Zm14 0L33 32l14 12V20Z" fill="var(--bg)" /><circle cx="50" cy="14" r="5" fill="var(--bg)" /></svg>
+        <span class="brand-word">Callback</span>
+      </a>
+      <span class="mode-chip mono" id="mode-chip">Loading</span>
+      <div class="status-row" id="status-row" aria-label="Connection status"></div>
+      <div class="topbar-actions">
+        <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle colour theme">
+          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
+          <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" /></svg>
+        </button>
+        <div id="account"></div>
+      </div>
+    </header>
+
+    <div class="banner" id="banner" hidden></div>
+
+    <main class="board" id="board">
+      <div class="col col-stage">
+        <section class="card program" aria-labelledby="program-title">
+          <header class="card-head">
+            <div>
+              <p class="eyebrow">Program preview</p>
+              <h2 id="program-title" class="card-title">What your stream sees</h2>
+            </div>
+            <a class="btn btn-sm" id="open-overlay" href="/overlay?demo=1" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5" /></svg>
+              Pop out overlay
+            </a>
+          </header>
+          <div class="screen">
+            <img src="/img/scene.svg" alt="Illustrated gameplay behind the overlay preview." width="1920" height="1080" />
+            <iframe id="preview" src="/overlay?embed=1" title="Overlay preview" tabindex="-1"></iframe>
+            <div class="screen-game mono" id="screen-game"></div>
+          </div>
+          <div id="stage-controls"></div>
+        </section>
+
+        <section class="card pulse" aria-labelledby="pulse-title">
+          <header class="card-head">
+            <div>
+              <p class="eyebrow">Chat pulse</p>
+              <h2 id="pulse-title" class="card-title">Messages per 10 seconds</h2>
+            </div>
+            <div class="pulse-now">
+              <span class="mono big" id="rate-now">0</span>
+              <span class="mono muted small" id="rate-base">baseline 0</span>
+            </div>
+          </header>
+          <div class="chart-wrap">
+            <canvas id="chart" aria-label="Chart of chat messages per ten seconds over the last two minutes, with the baseline and trigger moments marked." role="img"></canvas>
+          </div>
+          <div class="legend mono">
+            <span><i class="lg-rate"></i>Rate</span>
+            <span><i class="lg-base"></i>Baseline</span>
+            <span><i class="lg-spike"></i>Spike</span>
+            <span><i class="lg-trig"></i>Trigger</span>
+          </div>
+          <div class="phrases" id="phrases" aria-live="polite"></div>
+        </section>
+
+        <section class="card chat" aria-labelledby="chat-title">
+          <header class="card-head">
+            <div>
+              <p class="eyebrow">Live chat</p>
+              <h2 id="chat-title" class="card-title" data-chat-title>Chat</h2>
+            </div>
+            <span class="pill" id="chat-count"><span class="dot"></span>0 messages</span>
+          </header>
+          <ol class="chat-list" id="chat-list"></ol>
+        </section>
+      </div>
+
+      <div class="col col-brain">
+        <section class="armed card" id="armed" hidden aria-live="assertive"></section>
+
+        <section class="card feed" id="feed" aria-labelledby="feed-title" tabindex="-1">
+          <header class="card-head">
+            <div>
+              <p class="eyebrow">Candidate feed</p>
+              <h2 id="feed-title" class="card-title">Every match, with its reasoning</h2>
+            </div>
+            <span class="pill" id="cooldown-pill"><span class="dot"></span>Ready</span>
+          </header>
+          <form class="probe" id="probe">
+            <label class="sr-only" for="probe-input">Try a chat phrase</label>
+            <input id="probe-input" type="text" autocomplete="off" placeholder="Try a phrase, like “the cat did it again”" maxlength="200" />
+            <button class="btn btn-sm btn-ink" type="submit">Match</button>
+          </form>
+          <ol class="feed-list" id="feed-list"></ol>
+          <div class="empty" id="feed-empty">
+            <svg viewBox="0 0 120 90" aria-hidden="true"><rect x="10" y="14" width="100" height="62" rx="10" class="e-box" /><path d="M24 60 38 44l10 9 14-20 12 15 10-7 12 13" class="e-line" /><circle cx="62" cy="33" r="5" class="e-dot" /></svg>
+            <p><b>Listening to chat.</b> Candidates show up here the moment chat spikes or a phrase starts repeating.</p>
+          </div>
+        </section>
+
+        <section class="card controls" aria-labelledby="controls-title">
+          <header class="card-head">
+            <div>
+              <p class="eyebrow">Tuning</p>
+              <h2 id="controls-title" class="card-title">How picky Callback is</h2>
+            </div>
+          </header>
+          <div class="field">
+            <div class="field-head"><label for="threshold">Confidence threshold</label><output id="threshold-out" for="threshold">72%</output></div>
+            <input id="threshold" type="range" min="0.5" max="0.95" step="0.01" value="0.72" />
+            <p class="hint">Higher means fewer, surer callbacks. Below 65% it starts reaching.</p>
+          </div>
+          <div class="field">
+            <div class="field-head"><label for="cooldown">Cooldown between callbacks</label><output id="cooldown-out" for="cooldown">4 min</output></div>
+            <input id="cooldown" type="range" min="30" max="1800" step="30" value="240" />
+          </div>
+          <div class="field">
+            <div class="field-head"><label for="arm">Veto window</label><output id="arm-out" for="arm">3 s</output></div>
+            <input id="arm" type="range" min="0" max="10" step="1" value="3" />
+            <p class="hint">Time you get to cancel before a callback hits the stream.</p>
+          </div>
+          <fieldset class="toggles">
+            <legend class="label">Triggers</legend>
+            <label class="switch">Chat velocity spikes<input type="checkbox" data-trigger="velocity" checked /><span class="track"></span></label>
+            <label class="switch">Recurring phrases<input type="checkbox" data-trigger="phrase" checked /><span class="track"></span></label>
+            <label class="switch">Raids and category changes<input type="checkbox" data-trigger="events" checked /><span class="track"></span></label>
+            <label class="switch" id="chatbot-row">Post the clip link in chat<input type="checkbox" id="chatbot" checked /><span class="track"></span></label>
+          </fieldset>
+        </section>
+
+        <section class="card library" aria-labelledby="library-title">
+          <header class="card-head">
+            <div>
+              <p class="eyebrow">Clip library</p>
+              <h2 id="library-title" class="card-title">What Callback can remember</h2>
+            </div>
+            <span class="mono lib-count"><span id="lib-count">0</span> clips</span>
+          </header>
+          <div id="library-body"></div>
+        </section>
+
+        <section class="card history" aria-labelledby="history-title">
+          <header class="card-head">
+            <div>
+              <p class="eyebrow">On air</p>
+              <h2 id="history-title" class="card-title">Callbacks played</h2>
+            </div>
+          </header>
+          <ol class="history-list" id="history-list"></ol>
+          <div class="empty small-empty" id="history-empty">
+            <svg viewBox="0 0 120 90" aria-hidden="true"><rect x="14" y="20" width="92" height="52" rx="10" class="e-box" /><circle cx="44" cy="46" r="12" class="e-line" /><circle cx="76" cy="46" r="12" class="e-line" /><circle cx="44" cy="46" r="3" class="e-dot" /><circle cx="76" cy="46" r="3" class="e-dot" /></svg>
+            <p>Nothing on air yet. Played callbacks are logged here.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script type="module" src="/js/panel.js"></script>
+  </body>
+</html>
