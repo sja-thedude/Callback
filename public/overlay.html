@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Callback overlay</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500..700&family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/overlay.css" />
+  </head>
+  <body>
+    <div class="stage" aria-live="polite">
+      <div class="vignette"></div>
+      <div class="sweep"></div>
+      <div class="cb-wrap">
+      <div class="tally">
+        <span class="tally-chip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5 3 12l9 7V5Zm9 0-9 7 9 7V5Z" fill="currentColor"/></svg>CALLBACK</span>
+        <span class="tally-conf"></span>
+      </div>
+      <div class="cb-card">
+        <div class="rewind"><span>REWIND</span><span class="arrows" aria-hidden="true"><i></i><i></i><i></i></span><span class="to"></span></div>
+        <div class="media">
+          <div class="scanlines"></div>
+          <div class="tracking"></div>
+          <div class="flash"></div>
+          <span class="duration"></span>
+        </div>
+        <div class="label">
+          <div class="meta"></div>
+          <div class="title"></div>
+          <div class="reason"></div>
+        </div>
+        <div class="progress"><i></i></div>
+      </div>
+      </div>
+      <div class="chat-hint"></div>
+    </div>
+    <div class="status" hidden></div>
+    <script type="module" src="/js/overlay.js"></script>
+  </body>
+</html>
