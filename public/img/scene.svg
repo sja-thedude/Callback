@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#120d1c"/><stop offset="0.6" stop-color="#2a1b38"/><stop offset="1" stop-color="#1b1324"/></linearGradient>
+    <radialGradient id="lamp" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#ffb347" stop-opacity="0.6"/><stop offset="0.5" stop-color="#ff8a3d" stop-opacity="0.15"/><stop offset="1" stop-color="#ff8a3d" stop-opacity="0"/></radialGradient>
+    <radialGradient id="boss" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#9be7ff" stop-opacity="0.45"/><stop offset="1" stop-color="#9be7ff" stop-opacity="0"/></radialGradient>
+    <linearGradient id="cam" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a3328"/><stop offset="1" stop-color="#2a1c17"/></linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#sky)"/>
+  <g fill="#0b0812">
+    <path d="M0 0 H1920 V120 L1820 260 L1740 140 L1650 330 L1560 150 L1460 280 L1380 110 L1260 300 L1160 130 L1040 250 L960 120 L860 330 L760 140 L640 270 L560 120 L440 310 L340 150 L240 280 L140 130 L0 260Z" opacity="0.85"/>
+  </g>
+  <g fill="#1a1226" opacity="0.9">
+    <rect x="180" y="420" width="60" height="560"/><rect x="1660" y="380" width="70" height="600"/>
+    <rect x="160" y="400" width="100" height="30" rx="6"/><rect x="1645" y="360" width="100" height="30" rx="6"/>
+  </g>
+  <circle cx="1240" cy="560" r="330" fill="url(#boss)"/>
+  <g transform="translate(1240 600)">
+    <path d="M-120 260 Q-160 40 -60 -120 Q0 -200 60 -120 Q160 40 120 260Z" fill="#0b0812"/>
+    <circle cx="-34" cy="-60" r="14" fill="#9be7ff"/><circle cx="34" cy="-60" r="14" fill="#9be7ff"/>
+    <path d="M100 -20 L210 -140" stroke="#0b0812" stroke-width="18" stroke-linecap="round"/>
+    <rect x="196" y="-190" width="44" height="64" rx="10" fill="#ffb347"/>
+  </g>
+  <circle cx="1458" cy="410" r="160" fill="url(#lamp)"/>
+  <path d="M0 860 Q480 800 960 850 T1920 840 V1080 H0Z" fill="#150f1d"/>
+  <g transform="translate(640 820)">
+    <circle cx="0" cy="-92" r="30" fill="#0b0812"/><rect x="-30" y="-64" width="60" height="86" rx="18" fill="#0b0812"/>
+    <path d="M30 -40 L96 -84" stroke="#0b0812" stroke-width="14" stroke-linecap="round"/>
+    <circle cx="0" cy="-8" r="200" fill="url(#lamp)" opacity="0.7"/>
+  </g>
+  <g transform="translate(60 56)">
+    <rect width="420" height="84" rx="16" fill="#000" opacity="0.38"/>
+    <g fill="#ff6b6b"><path d="M44 30 a14 14 0 0 1 24 0 a14 14 0 0 1 24 0 q0 18 -24 32 q-24 -14 -24 -32z"/><path d="M114 30 a14 14 0 0 1 24 0 a14 14 0 0 1 24 0 q0 18 -24 32 q-24 -14 -24 -32z"/></g>
+    <path d="M184 30 a14 14 0 0 1 24 0 a14 14 0 0 1 24 0 q0 18 -24 32 q-24 -14 -24 -32z" fill="none" stroke="#ff6b6b" stroke-width="4"/>
+    <rect x="260" y="34" width="132" height="16" rx="8" fill="#ffffff" opacity="0.18"/><rect x="260" y="34" width="84" height="16" rx="8" fill="#ffb347"/>
+  </g>
+  <g transform="translate(1290 60)">
+    <rect width="570" height="70" rx="14" fill="#000" opacity="0.38"/>
+    <rect x="24" y="27" width="522" height="16" rx="8" fill="#ffffff" opacity="0.14"/><rect x="24" y="27" width="388" height="16" rx="8" fill="#9be7ff"/>
+  </g>
+  <g transform="translate(1470 700)">
+    <rect width="400" height="330" rx="22" fill="url(#cam)" stroke="#ffffff" stroke-opacity="0.12" stroke-width="3"/>
+    <rect x="30" y="34" width="120" height="86" rx="6" fill="#241917" stroke="#8a6550" stroke-width="5"/>
+    <circle cx="320" cy="80" r="70" fill="url(#lamp)"/>
+    <g transform="translate(200 330)"><circle cx="0" cy="-170" r="58" fill="#e9b48f"/><circle cx="-20" cy="-172" r="6" fill="#2a1a12"/><circle cx="20" cy="-172" r="6" fill="#2a1a12"/><path d="M-16 -148 Q0 -136 16 -148" stroke="#2a1a12" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M-60 -186 Q0 -262 60 -186 Q40 -228 -60 -186Z" fill="#3c2318"/><rect x="-92" y="-112" width="184" height="120" rx="52" fill="#c4553f"/><rect x="-118" y="-150" width="40" height="64" rx="16" fill="#1b1713"/><rect x="78" y="-150" width="40" height="64" rx="16" fill="#1b1713"/><path d="M-98 -150 Q0 -260 98 -150" stroke="#1b1713" stroke-width="12" fill="none"/></g>
+  </g>
+</svg>
