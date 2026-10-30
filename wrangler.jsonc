@@ -1,0 +1,18 @@
+{
+  "name": "callback",
+  "main": "src/worker.ts",
+  "account_id": "60bc0d18ed5229edce6eb9712d7900d9",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "html_handling": "drop-trailing-slash",
+    "run_worker_first": ["/api/*", "/auth/*"]
+  },
+  "ai": { "binding": "AI" },
+  "durable_objects": {
+    "bindings": [{ "name": "CHANNEL", "class_name": "Channel" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Channel"] }],
+  "observability": { "enabled": true }
+}
